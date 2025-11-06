@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>직원 안내</title>
+<style>
+  :root{
+    --bg:#fff; --fg:#111; --sub:#444; --card:#ffffff;
+    --border:#e5e7eb; --shadow:0 8px 24px rgba(0,0,0,.08);
+    --btn:#111; --btnfg:#fff;
+  }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:system-ui, "Noto Sans KR", "Malgun Gothic", sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:20px;}
+  .card{background:var(--card);border:1px solid var(--border);
+    border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .view{display:none}
+  .view.active{display:block}
+  .content{padding:20px;text-align:center}
+  .hero{background:#fff}
+  .hero img {
+  display: block;
+  width: 70%;            /* ✅ 이미지 크기를 전체 폭의 70%로 줄임 */
+  max-width: 400px;      /* ✅ 너무 커지지 않도록 최대폭 제한 */
+  height: auto;
+  object-fit: contain;   /* ✅ 이미지 비율 유지하면서 잘리지 않게 */
+  margin: 0 auto;        /* ✅ 가운데 정렬 */
+  border-radius: 12px;   /* (선택) 모서리 둥글게 */
+}
+
+  h1{font-size:22px;margin:0 0 10px}
+  p{margin:0 0 14px;color:var(--sub);line-height:1.7}
+  .field{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .input{
+    padding:12px 14px;font-size:16px;border:1.5px solid var(--border);
+    border-radius:12px;min-width:260px;max-width:520px;width:100%;outline:none;
+  }
+  .btn{
+    appearance:none;border:1.5px solid #000;border-radius:12px;
+    background:var(--btn);color:var(--btnfg);padding:12px 18px;
+    font-weight:800;cursor:pointer;transition:.15s;
+  }
+  .btn:focus-visible{outline:3px solid #9ec5ff;outline-offset:2px}
+  .btn:hover{filter:brightness(1.03);transform:translateY(-1px)}
+  .hint{color:#2563eb;font-weight:700;margin-top:6px}
+  .note{color:#b00020;font-weight:700;min-height:1.2em;margin-top:8px}
+  .caption{color:#666;margin-top:10px}
+  /* 비디오 박스 */
+  .video-wrap{padding:20px;text-align:center;background:#000}
+  video{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:10px}
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card view active" id="v1">
+      <div class="hero">
+        <img src="static/staff.jpg" alt="직원 사진">
+      </div>
+      <div class="content">
+        <h1>안내 데스크</h1>
+        <p>아으 바쁘다 바빠~! 아, 필요하신게 있으신가요?</p>
+        <form class="field" id="form1">
+          <input id="answer1" class="input" type="text" placeholder="...을/를 찾고 있습니다." autocomplete="off" />
+          <button class="btn" type="submit">말해보기</button>
+        </form>
+        <div class="note" id="msg1"></div>
+      </div>
+    </section>
+
+    <section class="card view" id="v2">
+      <div class="hero">
+        <img src="static/staff2.jpg" alt="직원 사진 2">
+      </div>
+      <div class="content">
+        <h1>직원 응대</h1>
+        <p>그럼 사람 없는데요?<br>염씨는 많긴해요. ‘이달의 긍정 사원’을 확인해보시겠어요? 저희 염씨 직원은 다 들어있어서요.</p>
+        <button class="btn" id="backToFirst">정확한 이름을 찾아서 말해야겠다...</button>
+      </div>
+    </section>
+
+    <section class="card view" id="v3">
+      <div class="hero">
+        <img src="static/staff3.jpg" alt="직원 사진 3">
+      </div>
+      <div class="content">
+        <h1>직원 응대</h1>
+        <p>아 그분이요? 제가 금방 불러드릴게요! <br>
+        최우수 긍정 사원으로 뽑히고나서는 찾으시는 고객님이 많아져서 잘 안보이셨을꺼에요.</p>
+        <button class="btn" id="toVideo">네 부탁드리겠습니다</button>
+      </div>
+    </section>
+
+    <section class="card view" id="v4">
+      <div class="video-wrap">
+        <video controls playsinline preload="metadata">
+          <!-- iOS/모바일 호환을 위해 playsinline, preload 설정 -->
+          <source src="static/pink.mp4" type="video/mp4" />
+          동영상을 재생할 수 없습니다.
+        </video>
+        <p class="caption">동영상이 재생되지 않으면 창구직원에게 알려주세요</p>
+      </div>
+    </section>
+  </main>
+
+<script>
+  // 유틸: 뷰 전환
+  function show(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // 스크롤 상단으로
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  // 입력 정규화: 공백 제거 + 소문자화(영문 대비)
+  function normalize(s){
+    return (s||"").toLowerCase().replace(/\s+/g,'');
+  }
+
+  // 첫 화면 처리
+  const form1 = document.getElementById('form1');
+  const ans1  = document.getElementById('answer1');
+  const msg1  = document.getElementById('msg1');
+
+  form1.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const v = normalize(ans1.value);
+
+    // 우선순위: '염라면' 포함 → 3페이지
+    if (v.includes('염라면')) {
+      msg1.textContent = '';
+      show('v3');
+      return;
+    }
+
+    // 다음: 나염라 / 염라대왕 / 염라대왕님 포함 → 2페이지
+    if (v.includes('나염라') || v.includes('염라대왕') || v.includes('염라대왕님')) {
+      msg1.textContent = '';
+      show('v2');
+      return;
+    }
+
+    // 그 외 → 안내 문구
+    msg1.textContent = '정확한 이름을 포함해서 말씀해 주세요.';
+  });
+
+  // v2 → v1
+  document.getElementById('backToFirst').addEventListener('click', ()=>{
+    show('v1');
+    // 필요 시 입력 유지/초기화 선택
+    // ans1.value = '';
+  });
+
+  // v3 → v4
+  document.getElementById('toVideo').addEventListener('click', ()=>{
+    show('v4');
+  });
+</script>
+</body>
+</html>
